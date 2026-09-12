@@ -59,14 +59,16 @@ same residues on a comparable scale.
 ## What it correlates with
 
 28 single-chain proteins, 40-160 residues, diverse folds, window 7. Each
-protein is correlated independently; the table reports the mean over proteins.
+protein is correlated independently. Pearson `r` is a skewed statistic, so both
+the naive arithmetic mean and the Fisher-z mean (`mean of artanh(r)`,
+back-transformed) are given.
 
-| property | mean r | median r | same sign |
+| property | arithmetic mean r | Fisher-z mean r | same sign |
 | --- | --- | --- | --- |
-| flexibility (GNM mean-square fluctuation) | **+0.562** | +0.569 | 28 / 28 positive |
-| contact degree | -0.405 | -0.434 | 27 / 28 negative |
-| burial (C-alpha coordination number) | -0.469 | -0.529 | 27 / 28 negative |
-| hydrophobicity (Kyte-Doolittle) | -0.135 | -0.115 | 25 / 28 negative |
+| flexibility (GNM mean-square fluctuation) | +0.562 | **+0.583** | 28 / 28 positive |
+| contact degree | -0.405 | -0.417 | 27 / 28 negative |
+| burial (C-alpha coordination number) | -0.469 | -0.484 | 27 / 28 negative |
+| hydrophobicity (Kyte-Doolittle) | -0.135 | — | 25 / 28 negative |
 
 ![multiprotein](figures/fig1_multiprotein.png)
 
@@ -85,6 +87,29 @@ is why the contact-degree row is negative.
 The hydrophobicity row has the sign one might expect from the intuition that
 polar surfaces couple more strongly, but the effect is weak and largely
 explained by burial; do not lean on it.
+
+## Is TC just contact density in disguise?
+
+This is the sharpest objection the indicator faces, and it deserves a direct
+answer. TC and contact degree are both functions of the same contact graph, so
+a correlation between them is guaranteed and proves nothing. The question is
+whether TC carries information that contact degree does not.
+
+Test: z-score TC, contact degree and flexibility within each protein, pool the
+2412 residues from the 28 structures, and compute the partial correlation of
+TC with flexibility while controlling for contact degree.
+
+| quantity | value |
+| --- | --- |
+| r(TC, flexibility) | +0.581 |
+| r(TC, contact degree) | -0.391 |
+| r(flexibility, contact degree) | -0.809 |
+| **partial r(TC, flexibility \| contact degree)** | **+0.490** |
+
+Contact density explains most of the flexibility signal (-0.81), but TC retains
+a large, clearly non-zero association on top of it (`z/SE ≈ 26` at n = 2412).
+Per protein, the partial correlation is positive in 27 of 28 structures
+(mean +0.461). **TC is not a repackaging of contact density.**
 
 ## What it is **not**
 

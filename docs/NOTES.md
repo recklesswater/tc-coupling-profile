@@ -93,6 +93,13 @@ correlation between TC and hydrophobicity controlling for burial is +0.116,
 i.e. the sign flips, so there is no evidence here for an independent
 hydrophobicity effect.
 
+**On averaging.** Pearson `r` has a skewed sampling distribution, so averaging
+`r` values across proteins is not the correct procedure; the standard approach
+is to average `artanh(r)` and transform back. Both are reported in the README.
+The correction is small here (+0.021 for the flexibility row against a mean of
+0.562) because the individual `r` values are moderate, but the arithmetic mean
+should not have been quoted alone.
+
 **On the burial measure.** An earlier version used a real solvent-accessible
 surface area and obtained -0.254; the C-alpha coordination number used here
 gives -0.469. Both are strongly negative and the sign is identical in 26-27 of
@@ -132,6 +139,41 @@ Limitations of this test: only five structures produced usable geometry, a
 ligand-contacting residue is not the same as a catalytic residue, and the
 cutoff is arbitrary. It is a caution, not a result. It is reported anyway
 because a stated negative is worth more than an unexamined claim.
+
+## 5b. Is TC just contact density? (No.)
+
+This is the objection that matters most, because TC and contact degree are both
+functions of the same contact graph. A correlation between them is guaranteed
+and carries no information.
+
+Within each protein we z-score TC, contact degree and flexibility, pool all
+2412 residues from the 28 structures, and compute the partial correlation of TC
+with flexibility controlling for contact degree.
+
+| quantity | value |
+| --- | --- |
+| r(TC, flexibility) | +0.581 |
+| r(TC, contact degree) | -0.391 |
+| r(flexibility, contact degree) | -0.809 |
+| partial r(TC, flexibility \| contact degree) | **+0.490** |
+
+Contact density accounts for most of the flexibility signal, as expected
+(`r = -0.81`), but TC keeps a large association on top of it. The Fisher-z of
+the partial correlation is 0.54 with a standard error of 0.020, so the ratio is
+about 26 at n = 2412. Per protein the partial correlation is positive in 27 of
+28 cases, mean +0.461.
+
+The same test was run at the level of the downstream experiment, which is the
+sharper version because the thing being predicted is the actual benefit of
+using a structured covariance rather than a proxy for it. Across 30 blocks from
+three proteins, `r(gain, TC | contact degree) = +0.797` (`z/SE = +5.7`). That
+experiment belongs to separate work and is not part of this repository.
+
+One caveat: the partial correlation is computed on a pooled sample of residues,
+and residues within a protein are not independent observations. The effective
+sample size is smaller than 2412, so the `z/SE` figure should be read as an
+order-of-magnitude indicator rather than a calibrated p-value. The per-protein
+result (27/28 positive) is the more robust statement.
 
 ## 6. Literature scan
 
