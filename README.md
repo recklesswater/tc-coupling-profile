@@ -143,3 +143,17 @@ docs/NOTES.md                derivation, worked example, literature scan
 A separate piece of work uses this indicator to decide where a non-diagonal
 covariance block should be placed in a variational model of conformational
 ensembles. That is not part of this repository.
+
+## Attribution and AI assistance
+
+Every mathematical ingredient used here is published work and is cited in
+[`docs/NOTES.md`](docs/NOTES.md): the Gaussian Network Model, total
+correlation, the modified Cholesky decomposition and the Kyte-Doolittle scale.
+What this repository claims is only the specific formulation and its
+validation, not the underlying methods -- and a phrase search is not a
+systematic review, so please read the prior-art note before treating anything
+here as new.
+
+The code was written with AI coding assistance under the author's direction.
+The research question, the design decisions and the interpretation of results
+are the author's, and the author is responsible for their correctness.

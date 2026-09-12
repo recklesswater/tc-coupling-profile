@@ -183,3 +183,67 @@ None of these have been done here.
 * Only the first chain of a PDB entry is used. For complexes this silently
   discards the rest, which is the right default for a single-chain indicator
   but should be made explicit when adapting the code.
+
+## 9. Methods, attribution and AI assistance
+
+### What is standard, and must be cited
+
+Everything mathematical used here is published work, none of it is original to
+this repository, and all of it should be cited in any write-up.
+
+| ingredient | source | obligation |
+| --- | --- | --- |
+| Gaussian Network Model | Tirion (1996); Bahar, Atilgan & Erman (1997) | cite |
+| total correlation / multi-information | Watanabe (1960); standard information theory | cite |
+| modified Cholesky decomposition | standard statistical method for sparse covariance estimation | cite |
+| KL divergence between Gaussians | textbook result | cite or state |
+| C-alpha contact definition (8 A) | standard in the elastic-network literature | cite |
+| Kyte-Doolittle hydropathy scale | Kyte & Doolittle (1982) | cite |
+| PDB coordinate data | RCSB PDB, distributed under CC0 1.0 | free to use |
+
+Methods, formulas and ideas are not copyrightable, so using them creates an
+obligation to attribute rather than an obligation to obtain permission. No
+licence from any of these authors is required.
+
+### What was not taken
+
+No code was copied from any other project. Every implementation here -- the
+masked-Cholesky covariance assembly, the whitened KL decomposition, the PDB
+reader, the plotting, the demo -- was written from the mathematical
+descriptions and the public PDB format specification. The numeric constants
+that appear are published facts.
+
+### What this repository claims
+
+Only the following, and nothing more:
+
+1. the specific formulation of the block total correlation of the GNM
+   correlation matrix as a per-residue structural indicator;
+2. the multi-protein validation of that indicator against flexibility,
+   contact degree, burial and hydrophobicity;
+3. the negative check against ligand-binding sites.
+
+It does **not** claim the underlying methods, the general idea of measuring
+inter-residue coupling with information theory, or the Gaussian Network Model.
+The general area -- information-theoretic measures of residue coupling -- is
+well developed, with several hundred papers on dynamical cross-correlation and
+allosteric communication alone.
+
+### Prior art
+
+The queries behind the counts quoted in section 6 are in
+`experiments/prior_art_scan.py`. A phrase search over titles and abstracts
+finds zero hits for the exact combination used here, but a phrase search is
+not a systematic review and **should not be read as evidence of novelty**. The
+closest known neighbours are work on mutual information between residues
+(2024), on synergy and redundancy in allosteric coupling (2025), and on linear
+correlations recovered from normal modes (2018); these should be read before
+any claim about what is new.
+
+### AI assistance
+
+The code in this repository was written with AI coding assistance under the
+author's direction. The research question, the design decisions and the
+interpretation of results are the author's, and the author is responsible for
+their correctness. This is stated rather than omitted because a reader is
+entitled to know how a piece of work was produced.
