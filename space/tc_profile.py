@@ -32,7 +32,7 @@ import urllib.request
 
 import numpy as np
 
-from .pdb_io import burial_proxy, ca_trace, ligand_atoms
+from pdb_io import burial_proxy, ca_trace, ligand_atoms
 
 __all__ = [
     "fetch_pdb",

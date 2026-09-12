@@ -22,11 +22,11 @@ import numpy as np  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from src.pdb_io import burial_proxy, ca_trace  # noqa: E402
 from src.tc_profile import (  # noqa: E402
     contact_map,
     fetch_pdb,
     gnm_correlation,
-    parse_ca,
     tc_profile,
 )
 
@@ -59,7 +59,7 @@ def main():
     for pdb_id in PDB_LIST:
         try:
             path = fetch_pdb(pdb_id)
-            ca, names, sasa = parse_ca(path, pdb_id)
+            ca, names, _ = ca_trace(path)
         except Exception as exc:  # noqa: BLE001
             print("  %-6s skipped (%s)" % (pdb_id, repr(exc)[:40]))
             continue
@@ -76,8 +76,10 @@ def main():
         prof = tc_profile(corr, WINDOW)
 
         hydro = np.array([KD.get(nm, np.nan) for nm in names])
-        sasa_n = (sasa - np.nanmin(sasa)) / max(1e-9, np.nanmax(sasa) - np.nanmin(sasa))
-        burial = 1.0 - sasa_n
+        # Burial proxy: number of C-alpha neighbours within 10 A. High = buried.
+        # (A real SASA would need a Biopython compiled extension; see
+        #  src/pdb_io.py for why that dependency was removed.)
+        burial = burial_proxy(ca, cutoff=10.0)
 
         m = np.isfinite(prof) & np.isfinite(hydro) & np.isfinite(burial)
         if m.sum() < 30:

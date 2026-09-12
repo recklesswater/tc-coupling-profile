@@ -17,11 +17,11 @@ import numpy as np  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from src.pdb_io import burial_proxy, ca_trace  # noqa: E402
 from src.tc_profile import (  # noqa: E402
     contact_map,
     fetch_pdb,
     gnm_correlation,
-    parse_ca,
     tc_profile,
 )
 
@@ -37,7 +37,7 @@ WINDOW = 7
 
 def main():
     path = fetch_pdb(PDB_ID)
-    ca, names, sasa = parse_ca(path, PDB_ID)
+    ca, names, _ = ca_trace(path)
     contacts = contact_map(ca)
     degree = contacts.sum(axis=1)
     corr = gnm_correlation(contacts)
@@ -45,7 +45,8 @@ def main():
 
     n = len(ca)
     resids = np.arange(1, n + 1)
-    sasa_n = (sasa - np.nanmin(sasa)) / max(1e-9, np.nanmax(sasa) - np.nanmin(sasa))
+    burial = burial_proxy(ca, cutoff=10.0)
+    burial_n = (burial - burial.min()) / max(1e-9, burial.max() - burial.min())
 
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.3))
 
@@ -65,8 +66,8 @@ def main():
 
     ax = axes[2]
     ax.plot(resids, prof, "-o", ms=3, color="#2f855a", label="TC profile")
-    ax.plot(resids, sasa_n * np.nanmax(prof), "-", lw=1.2, color="#2b6cb0",
-            alpha=0.7, label="normalised SASA (scaled)")
+    ax.plot(resids, burial_n * np.nanmax(prof), "-", lw=1.2, color="#2b6cb0",
+            alpha=0.7, label="burial proxy, scaled")
     peak = int(np.nanargmax(prof))
     ax.axvspan(max(1, peak - 3), min(n, peak + 4), color="#e53e3e", alpha=0.13)
     ax.annotate("peak TC at residue %d" % resids[peak],

@@ -1,3 +1,2 @@
 numpy>=1.26
-biopython>=1.83
 matplotlib>=3.8

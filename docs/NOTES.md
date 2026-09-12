@@ -68,8 +68,8 @@ the profile against four properties and recorded the Pearson coefficient.
 | property | mean r | median r | proteins with the same sign |
 | --- | --- | --- | --- |
 | flexibility (GNM variance) | +0.563 | +0.569 | 28 / 28 positive |
-| contact degree | -0.406 | -0.434 | 27 / 28 negative |
-| burial (1 - normalised SASA) | -0.254 | -0.297 | 26 / 28 negative |
+| contact degree | -0.405 | -0.434 | 27 / 28 negative |
+| burial (C-alpha coordination number) | -0.469 | -0.529 | 27 / 28 negative |
 | hydrophobicity (Kyte-Doolittle) | -0.135 | -0.115 | 25 / 28 negative |
 
 Each row is a mean over 28 independent proteins, not a pooled regression, so a
@@ -93,7 +93,47 @@ correlation between TC and hydrophobicity controlling for burial is +0.116,
 i.e. the sign flips, so there is no evidence here for an independent
 hydrophobicity effect.
 
-## 5. Literature scan
+**On the burial measure.** An earlier version used a real solvent-accessible
+surface area and obtained -0.254; the C-alpha coordination number used here
+gives -0.469. Both are strongly negative and the sign is identical in 26-27 of
+28 proteins, so the conclusion does not depend on the choice, but the magnitude
+does. A C-alpha coordination number is crude; it is used because a real SASA
+requires a compiled Biopython extension that some Windows application-control
+policies block, and a tool that fails to import is worse than a tool with a
+cruder burial proxy.
+
+## 5. Does TC mark binding sites? (No.)
+
+The obvious hope is that TC, being computable from structure alone, could stand
+in for experimental identification of active or binding sites. We tested it.
+
+For structures with a bound ligand we found every residue whose C-alpha lies
+within 5 A of a ligand heavy atom, and compared the mean TC at those residues
+with the mean over the whole chain, normalised by the profile's standard
+deviation.
+
+| structure | ligand-site residues | site TC | chain mean TC | z |
+| --- | --- | --- | --- | --- |
+| 3PTB (trypsin + benzamidine) | 8 | 0.301 | 0.527 | -0.73 |
+| 4DFR (DHFR + methotrexate) | 8 | 0.473 | 0.640 | -0.68 |
+| 1STP (streptavidin + biotin) | 5 | 0.546 | 0.578 | -0.08 |
+| 3ERT (oestrogen receptor + tamoxifen) | 8 | 0.883 | 1.001 | -0.28 |
+| 1M17 (EGFR kinase + erlotinib) | 14 | 0.856 | 1.248 | -0.34 |
+
+Mean z = -0.42; median -0.34; **0 of 5 show enrichment**.
+
+The sign is consistent with the main finding rather than with the hope.
+Binding sites are typically the rigid part of a protein -- they have to hold a
+ligand -- whereas TC is highest in soft, solvent-exposed regions. So TC is
+mildly *anti*-correlated with binding sites, and the tool should not be
+presented as a binding-site predictor.
+
+Limitations of this test: only five structures produced usable geometry, a
+ligand-contacting residue is not the same as a catalytic residue, and the
+cutoff is arbitrary. It is a caution, not a result. It is reported anyway
+because a stated negative is worth more than an unexamined claim.
+
+## 6. Literature scan
 
 OpenAlex, title + abstract field, September 2026.
 
@@ -115,7 +155,7 @@ quantity. The scan above is included for context rather than as a claim of
 novelty. Note also that OpenAlex searches titles and abstracts only, so a zero
 means the phrase does not appear there -- not that no related work exists.
 
-## 6. What would falsify the indicator's usefulness
+## 7. What would falsify the indicator's usefulness
 
 The profile is only interesting if it says something the simpler quantities do
 not. Three concrete tests would settle that:
@@ -132,7 +172,7 @@ not. Three concrete tests would settle that:
 
 None of these have been done here.
 
-## 7. Practical notes
+## 8. Practical notes
 
 * Window length matters. TC increases monotonically with window size, so
   profiles computed at different window lengths are not directly comparable in
