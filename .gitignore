@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# downloaded structures are cached locally, not committed
+data/
+
+.DS_Store
+.vscode/
+.idea/
