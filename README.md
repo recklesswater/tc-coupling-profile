@@ -2,7 +2,7 @@
 
 **A structure-only dynamics filter for triaging surface pockets before you spend GPU time on them.**
 
-[![► Try the Interactive Demo](https://img.shields.io/badge/%E2%96%B6_Try_the_Interactive_Demo-Hugging_Face_Space-2ea44f?style=for-the-badge)](https://huggingface.co/spaces/recklesswater/tc-coupling-profile)
+[![► Try the Interactive Demo](https://img.shields.io/badge/%E2%96%B6_Try_the_Interactive_Demo-Hugging_Face_Space-2ea44f?style=for-the-badge)](https://huggingface.co/spaces/Doncic7/tc-coupling-profile)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
 [![No simulation](https://img.shields.io/badge/no_MD-no_training-4c1)](https://github.com/recklesswater/tc-coupling-profile)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
