@@ -19,7 +19,7 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401,E402
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.pdb_io import ca_trace  # noqa: E402
-from src.tc_profile import contact_map, fetch_pdb, gnm_correlation, tc_profile  # noqa: E402
+from src.bd_profile import contact_map, fetch_pdb, gnm_correlation, bd_profile  # noqa: E402
 
 PDB_LIST = [
     "1CRN", "1UBQ", "1L2Y", "2CI2", "1PGB", "1BDD", "1SHG", "1TIT",
@@ -42,7 +42,7 @@ def tc_and_flexibility(pdb_id):
     contacts = contact_map(ca)
     gamma = np.diag(contacts.sum(axis=1)) - contacts
     flexibility = np.diag(np.linalg.pinv(gamma))
-    prof = tc_profile(gnm_correlation(contacts), WINDOW)
+    prof = bd_profile(gnm_correlation(contacts), WINDOW)
     return ca, prof, flexibility
 
 

@@ -1,6 +1,6 @@
-"""Validate the TC profile across a set of single-chain proteins.
+"""Validate the BD profile across a set of single-chain proteins.
 
-For each structure we compute the TC profile and correlate it against four
+For each structure we compute the BD profile and correlate it against four
 per-residue properties: GNM flexibility (mean-square fluctuation), contact
 degree, burial (1 - normalised SASA) and hydrophobicity (Kyte-Doolittle).
 
@@ -23,11 +23,11 @@ import numpy as np  # noqa: E402
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.pdb_io import burial_proxy, ca_trace  # noqa: E402
-from src.tc_profile import (  # noqa: E402
+from src.bd_profile import (  # noqa: E402
     contact_map,
     fetch_pdb,
     gnm_correlation,
-    tc_profile,
+    bd_profile,
 )
 
 plt.rcParams["font.sans-serif"] = ["DejaVu Sans", "Microsoft YaHei"]
@@ -73,7 +73,7 @@ def main():
         gamma = np.diag(degree) - contacts
         flexibility = np.diag(np.linalg.pinv(gamma))
         corr = gnm_correlation(contacts)
-        prof = tc_profile(corr, WINDOW)
+        prof = bd_profile(corr, WINDOW)
 
         hydro = np.array([KD.get(nm, np.nan) for nm in names])
         # Burial proxy: number of C-alpha neighbours within 10 A. High = buried.
@@ -140,7 +140,7 @@ def main():
         ax.set_title(label)
         ax.legend()
         ax.grid(alpha=0.25)
-    fig.suptitle("TC profile across %d single-chain proteins" % len(rows), fontsize=12)
+    fig.suptitle("BD profile across %d single-chain proteins" % len(rows), fontsize=12)
     fig.tight_layout(rect=[0, 0, 1, 0.93])
     figpath = os.path.join(ROOT, "figures", "fig1_multiprotein.png")
     fig.savefig(figpath)

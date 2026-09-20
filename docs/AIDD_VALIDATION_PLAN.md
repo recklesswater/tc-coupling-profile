@@ -32,7 +32,7 @@ should say so.
 Start with **COACH420** (about 400 structures) as the primary set, because it is small enough
 to iterate on and large enough for a first enrichment estimate. Exclusions: multi-chain
 interfaces, structures with ligands shorter than 8 heavy atoms, metal-only or buffer
-components, and any chain below 40 residues (the TC profile needs a window).
+components, and any chain below 40 residues (the BD profile needs a window).
 
 Sample size: with 400 structures and roughly 3-8 pockets per structure, the pocket-level
 analysis has on the order of 2000 observations, which is adequate to detect an AUC difference
@@ -60,10 +60,10 @@ looser 30% version are worth adding as sensitivity analyses).
 
 | feature | source | role |
 | --- | --- | --- |
-| mean TC over pocket residues | TC profile, window 7 | the new term |
-| max TC over pocket residues | TC profile | captures a locally soft patch inside an otherwise rigid pocket |
+| mean TC over pocket residues | BD profile, window 7 | the new term |
+| max TC over pocket residues | BD profile | captures a locally soft patch inside an otherwise rigid pocket |
 | pocket SASA / volume / depth | fpocket or DoGSiteScorer | the geometry baseline |
-| chain-mean TC | TC profile | used to normalise TC within each structure |
+| chain-mean TC | BD profile | used to normalise TC within each structure |
 
 Because TC magnitudes are not comparable across proteins (it grows with window length and
 with chain length), every TC feature must be **z-scored within its own protein** before being
@@ -90,7 +90,7 @@ the out-of-fold predictions. The deliverable is one number: the AUC gained by ad
 and plot precision (fraction of hits) at the top 1, 2, 5 and 10% of the ranking. This is the
 form the result takes in a screening context, and it is the figure to put in the README.
 
-**Step 4 — negative control.** Repeat step 2 with a shuffled TC profile (permute TC values
+**Step 4 — negative control.** Repeat step 2 with a shuffled BD profile (permute TC values
 within each protein) to confirm that any gain is not an artefact of the pipeline.
 
 ## 6. Pre-registered outcome interpretation

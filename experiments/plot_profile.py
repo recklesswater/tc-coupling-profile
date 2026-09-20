@@ -1,4 +1,4 @@
-"""Plot the TC profile for one structure, next to its contact map.
+"""Plot the BD profile for one structure, next to its contact map.
 
 Writes ``figures/fig2_profile_ubiquitin.png``.
 """
@@ -18,11 +18,11 @@ import numpy as np  # noqa: E402
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.pdb_io import burial_proxy, ca_trace  # noqa: E402
-from src.tc_profile import (  # noqa: E402
+from src.bd_profile import (  # noqa: E402
     contact_map,
     fetch_pdb,
     gnm_correlation,
-    tc_profile,
+    bd_profile,
 )
 
 plt.rcParams["font.sans-serif"] = ["DejaVu Sans", "Microsoft YaHei"]
@@ -41,7 +41,7 @@ def main():
     contacts = contact_map(ca)
     degree = contacts.sum(axis=1)
     corr = gnm_correlation(contacts)
-    prof = tc_profile(corr, WINDOW)
+    prof = bd_profile(corr, WINDOW)
 
     n = len(ca)
     resids = np.arange(1, n + 1)
@@ -65,7 +65,7 @@ def main():
     fig.colorbar(im, ax=ax, fraction=0.046)
 
     ax = axes[2]
-    ax.plot(resids, prof, "-o", ms=3, color="#2f855a", label="TC profile")
+    ax.plot(resids, prof, "-o", ms=3, color="#2f855a", label="BD profile")
     ax.plot(resids, burial_n * np.nanmax(prof), "-", lw=1.2, color="#2b6cb0",
             alpha=0.7, label="burial proxy, scaled")
     peak = int(np.nanargmax(prof))
@@ -75,7 +75,7 @@ def main():
                 fontsize=9, arrowprops=dict(arrowstyle="->", lw=1))
     ax.set_xlabel("residue number")
     ax.set_ylabel("TC (nats)")
-    ax.set_title("(c) TC profile, window = %d" % WINDOW)
+    ax.set_title("(c) BD profile, window = %d" % WINDOW)
     ax.legend(fontsize=8, loc="lower left")
     ax.grid(alpha=0.25)
 
