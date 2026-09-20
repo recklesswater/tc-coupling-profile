@@ -1,11 +1,11 @@
-"""Does TC concentrate on annotated functional sites?
+"""Does BD concentrate on annotated functional sites?
 
-The claim worth testing before making it in public: computing TC from a
+The claim worth testing before making it in public: computing BD from a
 structure can point at functionally important regions without wet-lab work.
 
 We use PDB SITE records as a proxy for annotated functional sites (catalytic
 residues, ligand-binding residues, and similar). For every structure with at
-least one SITE record we compare the mean TC at those residues against the
+least one SITE record we compare the mean BD at those residues against the
 mean over all residues of the same protein, so each protein acts as its own
 control.
 
@@ -86,7 +86,7 @@ def main():
         spread = np.nanstd(prof)
         z = (site_tc - bg_tc) / spread if spread > 0 else float("nan")
         hits.append((pdb_id, len(sites), site_tc, bg_tc, z))
-        print("  %-6s n_sites=%2d  site TC %.3f  background %.3f  z = %+.2f"
+        print("  %-6s n_sites=%2d  site BD %.3f  background %.3f  z = %+.2f"
               % (pdb_id, len(sites), site_tc, bg_tc, z))
 
     print()
@@ -97,12 +97,12 @@ def main():
     zs = np.array([h[4] for h in hits], dtype=float)
     zs = zs[np.isfinite(zs)]
     print("  %d proteins with SITE records" % len(hits))
-    print("  mean z (site TC vs protein background) = %+.3f" % zs.mean())
+    print("  mean z (site BD vs protein background) = %+.3f" % zs.mean())
     print("  median z = %+.3f" % statistics.median(zs))
     print("  proteins with z > 0 = %d / %d" % (int((zs > 0).sum()), len(zs)))
     print()
     if zs.mean() > 0.2 and (zs > 0).mean() > 0.6:
-        print("  => weak evidence that TC is enriched at annotated sites")
+        print("  => weak evidence that BD is enriched at annotated sites")
     else:
         print("  => no clear enrichment; do NOT claim site identification")
 

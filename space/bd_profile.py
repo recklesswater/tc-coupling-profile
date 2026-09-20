@@ -1,13 +1,13 @@
-"""TC coupling profile: a structure-derived indicator of local coupling in proteins.
+"""BD coupling profile: a structure-derived indicator of local coupling in proteins.
 
 The indicator is the **block total correlation** of a window of residues,
 
-    TC(B) = KL( N(0, R_BB) || N(0, diag(R_BB)) ) = -1/2 * ln det R_BB
+    BD(B) = KL( N(0, R_BB) || N(0, diag(R_BB)) ) = -1/2 * ln det R_BB
 
 i.e. the amount of information, in nats, that is lost if the motions of the
-residues inside that window are assumed to be independent. Large TC means the
+residues inside that window are assumed to be independent. Large BD means the
 residues in that window move in a correlated way and are poorly described by
-independent (diagonal) fluctuations; small TC means they are nearly
+independent (diagonal) fluctuations; small BD means they are nearly
 independent.
 
 `R` is the correlation matrix of residue fluctuations under the **Gaussian
@@ -88,7 +88,7 @@ def gnm_correlation(contacts: np.ndarray) -> np.ndarray:
 
 
 def block_dependence(corr: np.ndarray, idx) -> float:
-    """TC(B) = -1/2 ln det R_BB, in nats.
+    """BD(B) = -1/2 ln det R_BB, in nats.
 
     Equals the KL divergence between the true zero-mean Gaussian on that block
     and its diagonal approximation, so it is the exact information lost by
@@ -104,7 +104,7 @@ def block_dependence(corr: np.ndarray, idx) -> float:
 
 
 def bd_profile(corr: np.ndarray, window: int = 7) -> np.ndarray:
-    """Per-residue TC, using a centred window of ``window`` residues."""
+    """Per-residue BD, using a centred window of ``window`` residues."""
     n = corr.shape[0]
     half = window // 2
     prof = np.full(n, np.nan)

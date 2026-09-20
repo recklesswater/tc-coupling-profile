@@ -70,11 +70,11 @@ def main():
             alpha=0.7, label="burial proxy, scaled")
     peak = int(np.nanargmax(prof))
     ax.axvspan(max(1, peak - 3), min(n, peak + 4), color="#e53e3e", alpha=0.13)
-    ax.annotate("peak TC at residue %d" % resids[peak],
+    ax.annotate("peak BD at residue %d" % resids[peak],
                 xy=(resids[peak], prof[peak]), xytext=(resids[peak] - 30, prof[peak]),
                 fontsize=9, arrowprops=dict(arrowstyle="->", lw=1))
     ax.set_xlabel("residue number")
-    ax.set_ylabel("TC (nats)")
+    ax.set_ylabel("BD (nats)")
     ax.set_title("(c) BD profile, window = %d" % WINDOW)
     ax.legend(fontsize=8, loc="lower left")
     ax.grid(alpha=0.25)
@@ -87,9 +87,9 @@ def main():
     plt.close(fig)
 
     print("%s: %d residues" % (PDB_ID, n))
-    print("TC range %.3f - %.3f, mean %.3f"
+    print("BD range %.3f - %.3f, mean %.3f"
           % (np.nanmin(prof), np.nanmax(prof), np.nanmean(prof)))
-    print("highest TC at residue %d (%s)" % (resids[peak], names[peak]))
+    print("highest BD at residue %d (%s)" % (resids[peak], names[peak]))
     print("wrote %s" % out)
 
 

@@ -1,11 +1,11 @@
-# Notes on the TC coupling indicator
+# Notes on the BD (block dependence) indicator
 
 ## 1. Definition
 
 For a window of residues `B`:
 
 ```
-TC(B) = KL( N(0, R_BB) || N(0, diag(R_BB)) ) = -1/2 ln det R_BB
+BD(B) = KL( N(0, R_BB) || N(0, diag(R_BB)) ) = -1/2 ln det R_BB
 ```
 
 `R_BB` is the block of the GNM correlation matrix covering those residues.
@@ -17,7 +17,7 @@ KL( N(0, S1) || N(0, S2) ) = 1/2 [ tr(S2^-1 S1) - d + ln det S2 - ln det S1 ]
 
 Put `S1 = R_BB` (unit diagonal) and `S2 = diag(R_BB) = I` for a correlation
 matrix. Then `tr(S2^-1 S1) = d` and `ln det S2 = 0`, leaving
-`-1/2 ln det R_BB`. TC is non-negative because `det R_BB <= 1` for a
+`-1/2 ln det R_BB`. BD is non-negative because `det R_BB <= 1` for a
 correlation matrix, with equality exactly when the block is independent.
 
 This quantity is the **total correlation** (multi-information) of the block:
@@ -40,9 +40,9 @@ true inverse does not exist because `Gamma` has a zero eigenvalue
 corresponding to overall translation). Normalising that covariance gives the
 correlation matrix `R` with unit diagonal.
 
-Because `R` has unit diagonal, TC measures *only* the correlation structure --
+Because `R` has unit diagonal, BD measures *only* the correlation structure --
 the per-residue fluctuation magnitudes are divided out. This is why the strong
-correlation between TC and flexibility (section 4) is not a tautology: they
+correlation between BD and flexibility (section 4) is not a tautology: they
 are distinct functions of the same eigen-decomposition, and the relationship
 between them is an empirical finding rather than an algebraic identity.
 
@@ -51,13 +51,13 @@ between them is an empirical finding rather than an algebraic identity.
 Ubiquitin (1UBQ, 76 residues, 326 contacts, mean degree 8.6), window 7:
 
 ```
-TC range 0.216 - 1.074 nats, mean 0.586
-highest TC at residue 73 (the C-terminal tail)
-lowest  TC at residue 67
+BD range 0.216 - 1.074 nats, mean 0.586
+highest BD at residue 73 (the C-terminal tail)
+lowest  BD at residue 67
 ```
 
 For comparison, the whole 76-residue chain has a total correlation far larger
-than any window, which is the expected behaviour: TC grows with block size
+than any window, which is the expected behaviour: BD grows with block size
 because more pairs can be dependent.
 
 ## 4. Validation
@@ -89,7 +89,7 @@ increasing the *correlation* between neighbouring displacements.
 The hydrophobicity row is the one to treat most cautiously. Its sign matches
 the intuition that polar surfaces couple more, but the effect is weak, and
 hydrophobicity and burial are themselves correlated at +0.524. The partial
-correlation between TC and hydrophobicity controlling for burial is +0.116,
+correlation between BD and hydrophobicity controlling for burial is +0.116,
 i.e. the sign flips, so there is no evidence here for an independent
 hydrophobicity effect.
 
@@ -109,17 +109,17 @@ requires a compiled Biopython extension that some Windows application-control
 policies block, and a tool that fails to import is worse than a tool with a
 cruder burial proxy.
 
-## 5. Does TC mark binding sites? (No.)
+## 5. Does BD mark binding sites? (No.)
 
-The obvious hope is that TC, being computable from structure alone, could stand
+The obvious hope is that BD, being computable from structure alone, could stand
 in for experimental identification of active or binding sites. We tested it.
 
 For structures with a bound ligand we found every residue whose C-alpha lies
-within 5 A of a ligand heavy atom, and compared the mean TC at those residues
+within 5 A of a ligand heavy atom, and compared the mean BD at those residues
 with the mean over the whole chain, normalised by the profile's standard
 deviation.
 
-| structure | ligand-site residues | site TC | chain mean TC | z |
+| structure | ligand-site residues | site BD | chain mean BD | z |
 | --- | --- | --- | --- | --- |
 | 3PTB (trypsin + benzamidine) | 8 | 0.301 | 0.527 | -0.73 |
 | 4DFR (DHFR + methotrexate) | 8 | 0.473 | 0.640 | -0.68 |
@@ -131,7 +131,7 @@ Mean z = -0.42; median -0.34; **0 of 5 show enrichment**.
 
 The sign is consistent with the main finding rather than with the hope.
 Binding sites are typically the rigid part of a protein -- they have to hold a
-ligand -- whereas TC is highest in soft, solvent-exposed regions. So TC is
+ligand -- whereas BD is highest in soft, solvent-exposed regions. So BD is
 mildly *anti*-correlated with binding sites, and the tool should not be
 presented as a binding-site predictor.
 
@@ -140,25 +140,25 @@ ligand-contacting residue is not the same as a catalytic residue, and the
 cutoff is arbitrary. It is a caution, not a result. It is reported anyway
 because a stated negative is worth more than an unexamined claim.
 
-## 5b. Is TC just contact density? (No.)
+## 5b. Is BD just contact density? (No.)
 
-This is the objection that matters most, because TC and contact degree are both
+This is the objection that matters most, because BD and contact degree are both
 functions of the same contact graph. A correlation between them is guaranteed
 and carries no information.
 
-Within each protein we z-score TC, contact degree and flexibility, pool all
-2412 residues from the 28 structures, and compute the partial correlation of TC
+Within each protein we z-score BD, contact degree and flexibility, pool all
+2412 residues from the 28 structures, and compute the partial correlation of BD
 with flexibility controlling for contact degree.
 
 | quantity | value |
 | --- | --- |
-| r(TC, flexibility) | +0.581 |
-| r(TC, contact degree) | -0.391 |
+| r(BD, flexibility) | +0.581 |
+| r(BD, contact degree) | -0.391 |
 | r(flexibility, contact degree) | -0.809 |
-| partial r(TC, flexibility \| contact degree) | **+0.490** |
+| partial r(BD, flexibility \| contact degree) | **+0.490** |
 
 Contact density accounts for most of the flexibility signal, as expected
-(`r = -0.81`), but TC keeps a large association on top of it. The Fisher-z of
+(`r = -0.81`), but BD keeps a large association on top of it. The Fisher-z of
 the partial correlation is 0.54 with a standard error of 0.020, so the ratio is
 about 26 at n = 2412. Per protein the partial correlation is positive in 27 of
 28 cases, mean +0.461.
@@ -166,7 +166,7 @@ about 26 at n = 2412. Per protein the partial correlation is positive in 27 of
 The same test was run at the level of the downstream experiment, which is the
 sharper version because the thing being predicted is the actual benefit of
 using a structured covariance rather than a proxy for it. Across 30 blocks from
-three proteins, `r(gain, TC | contact degree) = +0.797` (`z/SE = +5.7`). That
+three proteins, `r(gain, BD | contact degree) = +0.797` (`z/SE = +5.7`). That
 experiment belongs to separate work and is not part of this repository.
 
 One caveat: the partial correlation is computed on a pooled sample of residues,
@@ -202,21 +202,33 @@ means the phrase does not appear there -- not that no related work exists.
 The profile is only interesting if it says something the simpler quantities do
 not. Three concrete tests would settle that:
 
-1. correlate TC against experimental measures of local flexibility (B-factors,
+1. correlate BD against experimental measures of local flexibility (B-factors,
    NMR order parameters, hydrogen-deuterium exchange) rather than against the
    GNM, which is derived from the same contact map;
-2. check whether TC agrees with other, independently constructed coupling
+2. check whether BD agrees with other, independently constructed coupling
    measures, for example from mutual information on an MD trajectory or from
    dynamical cross-correlation matrices;
-3. measure whether TC compresses to something simpler -- if a two-parameter
+3. measure whether BD compresses to something simpler -- if a two-parameter
    function of local contact density and window position reproduces it, the
    indicator adds little.
 
-None of these have been done here.
+**Test 1 has been run, and the indicator failed it.** B-factors from 24 crystal
+structures (`experiments/bfactor_validation.py`) are correlated with BD at a
+per-protein median of +0.42, but the mean-field diagonal of the same GNM matrix
+predicts them better (+0.64, 23 of 24 proteins). Once between-protein variation
+is removed the pooled correlation still favours the diagonal (+0.59 vs +0.38),
+and the diagonal is ahead in 21 of the 24 proteins taken one at a time. The two
+quantities the framework wanted to separate are not orthogonal either (pooled
+r = +0.63 within protein). So on the only independent axis available here, BD is
+a repackaging of the diagonal rather than an increment.
+`experiments/stage0_audit.py` produces those numbers and
+`results/stage0_key_numbers.csv` holds them in one place.
+
+Tests 2 and 3 have not been run.
 
 ## 8. Practical notes
 
-* Window length matters. TC increases monotonically with window size, so
+* Window length matters. BD increases monotonically with window size, so
   profiles computed at different window lengths are not directly comparable in
   magnitude -- only in shape.
 * Residues with no contacts inside a window can give a near-singular block; the

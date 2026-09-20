@@ -115,10 +115,10 @@ def main():
     print()
     print("  %d proteins" % len(rows))
     summary = {}
-    for key, label in (("r_flexibility", "TC vs flexibility"),
-                       ("r_contact_degree", "TC vs contact degree"),
-                       ("r_burial", "TC vs burial"),
-                       ("r_hydrophobicity", "TC vs hydrophobicity")):
+    for key, label in (("r_flexibility", "BD vs flexibility"),
+                       ("r_contact_degree", "BD vs contact degree"),
+                       ("r_burial", "BD vs burial"),
+                       ("r_hydrophobicity", "BD vs hydrophobicity")):
         v = np.array([r[key] for r in rows])
         summary[key] = v
         print("    %-24s mean %+.3f  median %+.3f  negative %2d/%d"

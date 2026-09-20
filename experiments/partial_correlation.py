@@ -1,8 +1,8 @@
-"""Is TC more than a repackaging of contact density?
+"""Is BD more than a repackaging of contact density?
 
-This is the sharpest objection the work faces, and it is a fair one. TC and
+This is the sharpest objection the work faces, and it is a fair one. BD and
 contact degree are both functions of the same contact graph, so a correlation
-between them is guaranteed and tells us nothing. What matters is whether TC
+between them is guaranteed and tells us nothing. What matters is whether BD
 carries information that contact density does not.
 
 Two things are done here.
@@ -12,15 +12,15 @@ Two things are done here.
    ``z = artanh(r)`` and transform back. Both are reported so the size of the
    correction is visible.
 
-2. **Partial correlation.** Within each protein we z-score TC, contact degree
-   and flexibility, pool the residues, and ask whether TC still predicts
+2. **Partial correlation.** Within each protein we z-score BD, contact degree
+   and flexibility, pool the residues, and ask whether BD still predicts
    flexibility once contact degree is controlled for:
 
-       r_partial(TC, flex | degree)
+       r_partial(BD, flex | degree)
          = (r_TC,flex - r_TC,deg * r_flex,deg)
            / sqrt((1 - r_TC,deg^2) * (1 - r_flex,deg^2))
 
-   A partial correlation near zero means TC adds nothing beyond contact
+   A partial correlation near zero means BD adds nothing beyond contact
    density. A clearly non-zero value means it does.
 """
 
@@ -93,7 +93,7 @@ def main():
             "r_flex": np.corrcoef(p, f)[0, 1],
             "r_deg": np.corrcoef(p, d)[0, 1],
             "r_bur": np.corrcoef(p, b)[0, 1],
-            # within-protein partial correlation of TC and flexibility,
+            # within-protein partial correlation of BD and flexibility,
             # controlling contact degree
             "r_partial": partial(p, f, d),
         })
@@ -106,9 +106,9 @@ def main():
     print("Part 1. Fisher z averaging vs naive arithmetic mean  (n = %d proteins)"
           % len(rows))
     print("=" * 78)
-    for key, label in (("r_flex", "TC vs flexibility"),
-                       ("r_deg", "TC vs contact degree"),
-                       ("r_bur", "TC vs burial")):
+    for key, label in (("r_flex", "BD vs flexibility"),
+                       ("r_deg", "BD vs contact degree"),
+                       ("r_bur", "BD vs burial")):
         vals = np.array([r[key] for r in rows])
         print("  %-24s  mean %.4f   Fisher-z mean %.4f   (difference %+.4f)"
               % (label, vals.mean(), fisher_mean(vals),
@@ -123,17 +123,17 @@ def main():
 
     print()
     print("=" * 78)
-    print("Part 2. Does TC add anything beyond contact density?")
+    print("Part 2. Does BD add anything beyond contact density?")
     print("=" * 78)
     r_tf = np.corrcoef(tc, flex)[0, 1]
     r_td = np.corrcoef(tc, deg)[0, 1]
     r_fd = np.corrcoef(flex, deg)[0, 1]
-    print("  r(TC, flexibility)        = %+.3f" % r_tf)
-    print("  r(TC, contact degree)     = %+.3f" % r_td)
+    print("  r(BD, flexibility)        = %+.3f" % r_tf)
+    print("  r(BD, contact degree)     = %+.3f" % r_td)
     print("  r(flexibility, degree)    = %+.3f" % r_fd)
     print()
     pc = partial(tc, flex, deg)
-    print("  PARTIAL r(TC, flexibility | contact degree) = %+.3f" % pc)
+    print("  PARTIAL r(BD, flexibility | contact degree) = %+.3f" % pc)
     print()
     n = len(tc)
     # Fisher z standard error for a partial correlation with one controlled var
@@ -141,14 +141,14 @@ def main():
     z = np.arctanh(np.clip(pc, -0.999999, 0.999999))
     print("  Fisher z = %+.2f, SE = %.4f, z/SE = %+.1f" % (z, se, z / se))
     if abs(z / se) > 3:
-        print("  => TC retains a substantial, statistically clear association")
+        print("  => BD retains a substantial, statistically clear association")
         print("     with flexibility after controlling for contact density.")
     else:
-        print("  => TC does NOT add much beyond contact density on this measure.")
+        print("  => BD does NOT add much beyond contact density on this measure.")
 
     print()
     print("-" * 78)
-    print("Per-protein partial correlation r(TC, flexibility | contact degree)")
+    print("Per-protein partial correlation r(BD, flexibility | contact degree)")
     vals = np.array([r["r_partial"] for r in rows])
     print("  mean %+.3f   median %+.3f   positive %d/%d"
           % (vals.mean(), np.median(vals), int((vals > 0).sum()), len(vals)))

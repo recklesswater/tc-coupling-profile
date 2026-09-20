@@ -1,4 +1,4 @@
-"""TC coupling profile for protein structures."""
+"""BD coupling profile for protein structures."""
 
 from .pdb_io import burial_proxy, ca_trace, ligand_atoms, read_atoms
 from .bd_profile import (

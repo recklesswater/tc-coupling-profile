@@ -1,4 +1,4 @@
-"""Build the repository hero image: 1UBQ coloured by TC, next to the pooled TC-flexibility scatter.
+"""Build the repository hero image: 1UBQ coloured by BD, next to the pooled BD-flexibility scatter.
 
 Writes figures/fig0_hero.png
 """
@@ -37,7 +37,7 @@ plt.rcParams.update({
 })
 
 
-def tc_and_flexibility(pdb_id):
+def bd_and_flexibility(pdb_id):
     ca, names, _ = ca_trace(fetch_pdb(pdb_id))
     contacts = contact_map(ca)
     gamma = np.diag(contacts.sum(axis=1)) - contacts
@@ -47,8 +47,8 @@ def tc_and_flexibility(pdb_id):
 
 
 def main():
-    # ---- left panel: ubiquitin coloured by TC ----
-    ca, prof, _ = tc_and_flexibility("1UBQ")
+    # ---- left panel: ubiquitin coloured by BD ----
+    ca, prof, _ = bd_and_flexibility("1UBQ")
     tail = slice(69, 76)  # residues 70-76, the flexible C-terminal tail
 
     fig = plt.figure(figsize=(11.5, 5.2))
@@ -73,13 +73,13 @@ def main():
     ):
         setter(values.min() - margin, values.max() + margin)
     cbar = fig.colorbar(sc, ax=ax, orientation="horizontal", fraction=0.04, pad=0.0, shrink=0.7)
-    cbar.set_label("TC (nats)", fontsize=10)
+    cbar.set_label("BD (nats)", fontsize=10)
 
-    # ---- right panel: pooled TC vs flexibility ----
+    # ---- right panel: pooled BD vs flexibility ----
     xs, ys = [], []
     for pdb_id in PDB_LIST:
         try:
-            _, prof_i, flex_i = tc_and_flexibility(pdb_id)
+            _, prof_i, flex_i = bd_and_flexibility(pdb_id)
         except Exception:
             continue
         if not (MIN_LEN <= len(prof_i) <= MAX_LEN):
@@ -87,9 +87,9 @@ def main():
         mask = np.isfinite(prof_i) & np.isfinite(flex_i)
         if mask.sum() < 30:
             continue
-        tc_z = (prof_i[mask] - prof_i[mask].mean()) / prof_i[mask].std()
+        bd_z = (prof_i[mask] - prof_i[mask].mean()) / prof_i[mask].std()
         fx_z = (flex_i[mask] - flex_i[mask].mean()) / flex_i[mask].std()
-        xs.append(tc_z)
+        xs.append(bd_z)
         ys.append(fx_z)
     x = np.concatenate(xs)
     y = np.concatenate(ys)
@@ -100,7 +100,7 @@ def main():
     slope, intercept = np.polyfit(x, y, 1)
     grid = np.linspace(x.min(), x.max(), 50)
     ax2.plot(grid, slope * grid + intercept, color="#D62728", linewidth=1.8)
-    ax2.set_xlabel("TC, z-scored within each protein", fontsize=11)
+    ax2.set_xlabel("BD, z-scored within each protein", fontsize=11)
     ax2.set_ylabel("GNM flexibility, z-scored", fontsize=11)
     ax2.text(0.03, 0.95, f"n = {len(x):,} residues\n{len(xs)} proteins\nr = {r:+.3f}",
              transform=ax2.transAxes, va="top", fontsize=11)

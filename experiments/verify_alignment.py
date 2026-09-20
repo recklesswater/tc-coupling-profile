@@ -26,7 +26,7 @@ import torch
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.bd_profile import contact_map, fetch_pdb, gnm_correlation  # noqa: E402
-from tc_alignment_model import AlignedVAE  # noqa: E402
+from bd_alignment_model import AlignedVAE  # noqa: E402
 
 PDB_ID = "1UBQ"
 PER_RES = 2

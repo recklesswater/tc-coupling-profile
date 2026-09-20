@@ -1,4 +1,4 @@
-"""Does TC concentrate on ligand-binding sites?
+"""Does BD concentrate on ligand-binding sites?
 
 The claim worth testing before making it in public: computing the BD profile
 from a structure can point at functionally important regions without wet-lab
@@ -6,7 +6,7 @@ work.
 
 Test: take structures that have a bound ligand (HETATM, excluding water and
 common ions), find the residues within 5 A of any ligand heavy atom, and
-compare the mean TC there against the mean over the whole chain. Each protein
+compare the mean BD there against the mean over the whole chain. Each protein
 is its own control, and we report the difference in units of the profile's
 own standard deviation.
 
@@ -90,7 +90,7 @@ def main():
             print("  %-6s skipped (no usable ligand / too small)" % pdb_id)
             continue
         rows.append(r)
-        print("  %-6s n=%3d  site residues=%2d  site TC %.3f  background %.3f  z=%+.2f"
+        print("  %-6s n=%3d  site residues=%2d  site BD %.3f  background %.3f  z=%+.2f"
               % (r["pdb"], r["n_res"], r["n_site"], r["site_tc"], r["bg_tc"], r["z"]))
 
     print()
@@ -118,9 +118,9 @@ def main():
     print("  z > 0: %d / %d" % (int((zs > 0).sum()), len(zs)))
     print()
     if zs.mean() > 0.2 and (zs > 0).mean() > 0.6:
-        print("  => weak positive: TC tends to be higher at ligand-binding residues")
+        print("  => weak positive: BD tends to be higher at ligand-binding residues")
     else:
-        print("  => no clear enrichment; do NOT claim that TC identifies binding sites")
+        print("  => no clear enrichment; do NOT claim that BD identifies binding sites")
 
 
 if __name__ == "__main__":

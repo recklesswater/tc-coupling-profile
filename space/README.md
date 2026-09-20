@@ -1,5 +1,5 @@
 ---
-title: TC Coupling Profile
+title: BD Block Dependence Profile
 emoji: 🧬
 colorFrom: green
 colorTo: blue
@@ -19,12 +19,12 @@ The indicator is the **block total correlation** of the Gaussian Network Model
 correlation matrix:
 
 ```
-TC(B) = KL( N(0, R_BB) || N(0, diag(R_BB)) ) = -1/2 * ln det R_BB
+BD(B) = KL( N(0, R_BB) || N(0, diag(R_BB)) ) = -1/2 * ln det R_BB
 ```
 
-computed over a sliding window of residues. Large TC means the residues in that
+computed over a sliding window of residues. Large BD means the residues in that
 window move together and an independent (diagonal) description of their motion
-costs the most; small TC means independence is a good approximation.
+costs the most; small BD means independence is a good approximation.
 
 Everything is derived from the C-alpha trace. No simulation, no training, no
 experimental data, no fitting.
@@ -35,9 +35,9 @@ is useful before spending effort on a normal-mode calculation, a covariance
 estimate, or a coarse-grained simulation.
 
 **What it is not:** it does not identify binding sites or active pockets. On
-five holo structures, ligand-binding residues had *lower* TC than the chain
+five holo structures, ligand-binding residues had *lower* BD than the chain
 average, not higher -- binding sites tend to be the rigid part of a protein,
-while TC marks the soft part.
+while BD marks the soft part.
 
 Source code, the 28-protein validation and the caveats are on GitHub:
 https://github.com/recklesswater/tc-coupling-profile

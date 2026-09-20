@@ -1,4 +1,4 @@
-"""Gradio demo: coupling indicator (TC) computed from a PDB structure.
+"""Gradio demo: coupling indicator (BD) computed from a PDB structure.
 
 Anyone can type a PDB ID and see, in about a second, which parts of the chain
 are the ones where treating residues as independently moving is a poor
@@ -64,12 +64,12 @@ def compute(pdb_id: str):
     fig.colorbar(im, ax=ax, fraction=0.046)
 
     ax = axes[2]
-    ax.plot(resids, prof, "-o", ms=3, color="#2f855a", label="TC (window %d)" % WINDOW)
+    ax.plot(resids, prof, "-o", ms=3, color="#2f855a", label="BD (window %d)" % WINDOW)
     ax.plot(resids, burial_n * float(np.nanmax(prof)), "-", lw=1.1,
             color="#2b6cb0", alpha=0.7, label="burial proxy (scaled)")
     ax.axvspan(max(1, peak + 1 - 3), min(n, peak + 1 + 3), color="#e53e3e", alpha=0.13)
     ax.set_xlabel("residue number")
-    ax.set_ylabel("TC (nats)")
+    ax.set_ylabel("BD (nats)")
     ax.set_title("coupling indicator")
     ax.legend(fontsize=8, loc="lower left")
     ax.grid(alpha=0.25)
@@ -79,14 +79,14 @@ def compute(pdb_id: str):
 
     summary = (
         "**%s** - %d residues\n\n"
-        "- TC range: **%.3f - %.3f** nats (mean %.3f)\n"
+        "- BD range: **%.3f - %.3f** nats (mean %.3f)\n"
         "- highest coupling around residue **%d** (%s)\n"
         "- residues with no contacts in their window can give a near-singular "
         "block and are reported as NaN\n\n"
-        "High TC = the residues in that window move together, so treating them "
+        "High BD = the residues in that window move together, so treating them "
         "as independent costs the most. This is a *structural indicator*, not a "
         "binding-site predictor - on five holo structures, ligand-binding "
-        "residues had **lower** TC than the chain average."
+        "residues had **lower** BD than the chain average."
         % (pdb_id, n, float(np.nanmin(prof)), float(np.nanmax(prof)),
            float(np.nanmean(prof)), peak + 1, names[peak])
     )
@@ -96,14 +96,14 @@ def compute(pdb_id: str):
 def build_demo():
     import gradio as gr
 
-    with gr.Blocks(title="TC coupling profile") as demo:
+    with gr.Blocks(title="BD coupling profile") as demo:
         gr.Markdown(
-            "# TC coupling profile\n"
+            "# BD coupling profile\n"
             "**Mean field is almost always good enough. This shows where "
             "\"almost\" fails.**\n\n"
             "Type a PDB ID. The indicator is the block total correlation of the "
             "Gaussian Network Model correlation matrix,\n\n"
-            "`TC(B) = -1/2 ln det R_BB`\n\n"
+            "`BD(B) = -1/2 ln det R_BB`\n\n"
             "computed per residue window straight from the structure - no "
             "simulation, no training, no experimental data."
         )
