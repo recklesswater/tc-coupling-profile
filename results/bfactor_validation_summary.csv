@@ -1,0 +1,6 @@
+quantity,per_protein_median,per_protein_fisher_z,n_positive,n_proteins,pooled_raw,pooled_z
+r_bd_bfactor,0.417856,0.378529,19.000000,24.000000,0.644287,0.376307
+r_msf_bfactor,0.641431,0.631174,23.000000,24.000000,0.480038,0.588879
+r_degree_bfactor,-0.539669,-0.513747,1.000000,24.000000,-0.139079,-0.459427
+partial_r_bd_bfactor_given_degree,0.236456,0.210068,16.000000,24.000000,0.636641,0.252616
+r_bd_logmsf,nan,nan,0.000000,0.000000,0.660093,0.612724

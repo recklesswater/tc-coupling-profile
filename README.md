@@ -42,10 +42,13 @@ pip install -r requirements.txt
 python experiments/plot_profile.py          # profile for one structure
 python experiments/run_multiprotein.py      # validation over 28 proteins
 python experiments/check_ligand_sites.py    # does it point at binding sites?
+python experiments/bfactor_validation.py    # independent check against B-factors
+python experiments/stage0_audit.py          # axis orthogonality, conditioning, LOPO
+python experiments/plot_bfactor_validation.py   # figure 3
 ```
 
 ```python
-from src.tc_profile import profile_from_pdb
+from src.bd_profile import profile_from_pdb
 
 profile, corr, names = profile_from_pdb("1UBQ", window=7)
 ```
@@ -136,15 +139,26 @@ elastic network, a force field or a simulation. They are a weaker proxy than a
 trajectory -- crystal packing, resolution and refinement all leak into them --
 but they are *independent*, which is the property that was missing.
 
-`experiments/bfactor_validation.py`, 24 structures with usable B-factors (4 of
-the 28 were dropped: three have uniform B-factors, one does not parse), 2,021
-residues.
+`experiments/bfactor_validation.py`. Every structure in `data/pdb` with a usable
+C-alpha B-factor: 30 were tried, 6 dropped because their B-factors are uniform
+(predicted models or fixed-B refinement), leaving 24 proteins and 2,021 residues.
 
-| quantity | per-protein median | positive | pooled |
-| --- | --- | --- | --- |
-| r(BD, B-factor) | +0.418 | 19 / 24 | +0.376 |
-| r(contact degree, B-factor) | -0.540 | 1 / 24 | -0.459 |
-| partial r(BD, B-factor \| contact degree) | +0.236 | 16 / 24 | +0.253 |
+*Pooled (within-protein)* means z-scoring each quantity inside its own protein
+before concatenating residues, so between-protein variation stays out of the
+correlation. *Pooled (raw residues)* is the naive concatenation. The two
+conventions disagree in sign of which indicator wins, and that disagreement is
+between-protein variation, not biology -- see the audit section below.
+
+| quantity | per-protein median | positive | pooled (within-protein) | pooled (raw residues) |
+| --- | --- | --- | --- | --- |
+| r(BD, B-factor) | +0.418 | 19 / 24 | +0.376 | +0.644 |
+| r(log MSF, B-factor) | +0.641 | 23 / 24 | +0.589 | +0.480 |
+| r(contact degree, B-factor) | -0.540 | 1 / 24 | -0.459 | -0.139 |
+| partial r(BD, B-factor \| contact degree) | +0.236 | 16 / 24 | +0.253 | +0.637 |
+
+The mean-field column is the one that matters for the verdict: the diagonal of the
+same matrix predicts B-factors better than BD does, within protein and after
+removing between-protein variation.
 
 ![bfactor validation](figures/fig3_bfactor_validation.png)
 
@@ -155,8 +169,8 @@ How to read it, honestly:
 * **It is not the strongest signal**: contact density alone tracks B-factors
   more closely (negative in 23 of 24).
 * **Once contact density is controlled for, only a modest association
-  survives** (pooled +0.25) -- real, but much smaller than the +0.49 that the
-  same-matrix analysis suggested.
+  survives** (+0.25 with between-protein variation removed, +0.64 without) --
+  real, but much smaller than the +0.49 that the same-matrix analysis suggested.
 * **The effect is heterogeneous**: per-protein r(BD, B) spans -0.21 to +0.81.
   A single pooled number would hide that, so both are reported.
 
@@ -208,14 +222,16 @@ Other caveats:
 ## Files
 
 ```
-src/tc_profile.py            the indicator: GNM covariance and block BD
+src/bd_profile.py            the indicator: GNM covariance and block BD
 src/pdb_io.py                minimal dependency-free PDB reader
 experiments/plot_profile.py  contact map, GNM correlation, BD profile
 experiments/run_multiprotein.py     the 28-protein validation
 experiments/check_ligand_sites.py   the binding-site check above
 experiments/bfactor_validation.py   independent check against experimental B-factors
 experiments/plot_bfactor_validation.py   figure for the B-factor check
+experiments/stage0_audit.py  axis orthogonality, conditioning, cutoff/window, LOPO
 results/                     CSV output
+results/stage0_key_numbers.csv   every number quoted in the audit section
 figures/                     figures used above
 docs/NOTES.md                derivation, worked example, literature scan
 ```
@@ -249,7 +265,7 @@ independent of the elastic network model. 30 structures; 6 excluded because thei
 B-factors are uniform (predicted models or fixed-B refinement), leaving 24 proteins
 (2,021 residues).
 
-| quantity | within-protein median r | positive | pooled r |
+| quantity | within-protein median r | positive | pooled r (raw residues) |
 | --- | --- | --- | --- |
 | BD vs B-factor | +0.418 | 19 / 24 | +0.644 |
 | **GNM mean-square fluctuation vs B-factor** | **+0.641** | **23 / 24** | +0.480 |
@@ -261,17 +277,23 @@ matrix -- predicts B-factors better than BD does (median r = +0.64 vs +0.42). BD
 adds no information beyond the diagonal.**
 
 The two quantities the framework wanted to separate are **not orthogonal**: pooled
-corr(z(log MSF), z(BD)) = **+0.684**. The proposed "2x2 dynamic map" (amplitude x coupling)
-therefore cannot be built on this dataset; the two axes are largely one.
+r(log MSF, BD) = **+0.684** across all residues, and **+0.632** once each quantity is
+z-scored inside its own protein first. Both conventions put the two axes on top of each
+other, so the proposed "2x2 dynamic map" (amplitude x coupling) cannot be built on this
+dataset.
 
-Pooled across proteins BD appears stronger than MSF (+0.64 vs +0.48), but that ordering is an
-artefact of pooling between-protein variation, not a within-protein effect -- **the same
-Simpson-type trap this project originally set out to audit**.
+Pooled across raw residues BD appears stronger than MSF (+0.64 vs +0.48), but the moment
+each quantity is z-scored within its own protein the ordering flips (+0.38 vs +0.59). The
+first number is an artefact of pooling between-protein variation, not a within-protein
+effect -- **the same Simpson-type trap this project originally set out to audit**.
 
 Two further robustness checks, reported rather than hidden: the pooled BD/MSF correlation
-falls from +0.68 (8 A cutoff) to +0.45 (12 A) and from +0.71 (window 5) to +0.57 (window 15);
-numeric conditioning is benign (median smallest eigenvalue 0.58, median condition number 4.2,
-so the near-singularity concern raised in review does not apply at 8 A).
+falls from +0.68 (8 A cutoff) to +0.45 (12 A) and from +0.71 (window 5) to +0.57 (window 15)
+-- both measured on raw pooled residues; numeric conditioning is benign (median smallest
+eigenvalue 0.58, median condition number 4.2, median effective rank 5.9 of a 7-residue
+window, so the near-singularity concern raised in review does not apply at 8 A). Leaving one
+structure out at a time moves the within-protein correlation only between +0.62 and +0.64,
+so no single protein carries the result.
 
 **Conclusion.** Block dependence as formulated here is a repackaging, not an increment: the
 mean-field diagonal of the GNM already carries essentially all of the information that this

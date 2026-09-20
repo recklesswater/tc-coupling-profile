@@ -1,0 +1,14 @@
+quantity,value
+n_structures,30.000000
+n_residues,2671.000000
+n_structures_with_bfactors,24.000000
+r_z_logmsf_z_bd_pooled,0.632236
+median_per_protein_r_bd_logmsf,0.627571
+median_min_eigenvalue,0.584897
+median_condition_number,4.205342
+median_effective_rank,5.886973
+median_r_bd_bfactor,0.417856
+median_r_logmsf_bfactor,0.641431
+lopo_pooled_r_median,0.632367
+lopo_pooled_r_min,0.620109
+lopo_pooled_r_max,0.640895
