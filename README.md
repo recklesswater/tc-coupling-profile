@@ -242,6 +242,41 @@ should be read:
   method is therefore named **BD (block dependence)**, so that what is being discussed is
   unambiguous: the block-level dependence of the GNM correlation matrix.
 
+## Audit against an independent experimental axis (2026-09-20)
+
+The indicator was audited against crystallographic B-factors -- an axis that is
+independent of the elastic network model. 30 structures; 6 excluded because their
+B-factors are uniform (predicted models or fixed-B refinement), leaving 24 proteins
+(2,021 residues).
+
+| quantity | within-protein median r | positive | pooled r |
+| --- | --- | --- | --- |
+| BD vs B-factor | +0.418 | 19 / 24 | +0.644 |
+| **GNM mean-square fluctuation vs B-factor** | **+0.641** | **23 / 24** | +0.480 |
+| contact degree vs B-factor | -0.540 | 1 / 24 | -0.139 |
+| partial: BD vs B-factor given contact degree | +0.236 | 16 / 24 | +0.637 |
+
+**Within protein, the GNM mean-square fluctuation -- the trivial diagonal of the same
+matrix -- predicts B-factors better than BD does (median r = +0.64 vs +0.42). BD therefore
+adds no information beyond the diagonal.**
+
+The two quantities the framework wanted to separate are **not orthogonal**: pooled
+corr(z(log MSF), z(BD)) = **+0.684**. The proposed "2x2 dynamic map" (amplitude x coupling)
+therefore cannot be built on this dataset; the two axes are largely one.
+
+Pooled across proteins BD appears stronger than MSF (+0.64 vs +0.48), but that ordering is an
+artefact of pooling between-protein variation, not a within-protein effect -- **the same
+Simpson-type trap this project originally set out to audit**.
+
+Two further robustness checks, reported rather than hidden: the pooled BD/MSF correlation
+falls from +0.68 (8 A cutoff) to +0.45 (12 A) and from +0.71 (window 5) to +0.57 (window 15);
+numeric conditioning is benign (median smallest eigenvalue 0.58, median condition number 4.2,
+so the near-singularity concern raised in review does not apply at 8 A).
+
+**Conclusion.** Block dependence as formulated here is a repackaging, not an increment: the
+mean-field diagonal of the GNM already carries essentially all of the information that this
+independent experimental axis can detect. The audit is the result.
+
 ## Attribution and AI assistance
 
 Every mathematical ingredient used here is published work and is cited in
