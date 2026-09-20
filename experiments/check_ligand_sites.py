@@ -1,6 +1,6 @@
 """Does TC concentrate on ligand-binding sites?
 
-The claim worth testing before making it in public: computing the TC profile
+The claim worth testing before making it in public: computing the BD profile
 from a structure can point at functionally important regions without wet-lab
 work.
 
@@ -27,11 +27,11 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.pdb_io import ca_trace, ligand_atoms  # noqa: E402
-from src.tc_profile import (  # noqa: E402
+from src.bd_profile import (  # noqa: E402
     contact_map,
     fetch_pdb,
     gnm_correlation,
-    tc_profile,
+    bd_profile,
 )
 
 # Classic holo structures across several fold / function classes.
@@ -69,7 +69,7 @@ def analyse(pdb_id: str):
         return None
 
     contacts = contact_map(ca)
-    prof = tc_profile(gnm_correlation(contacts), WINDOW)
+    prof = bd_profile(gnm_correlation(contacts), WINDOW)
     site_tc = float(np.nanmean(prof[site_idx]))
     bg_tc = float(np.nanmean(prof))
     spread = float(np.nanstd(prof))

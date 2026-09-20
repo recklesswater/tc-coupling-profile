@@ -41,8 +41,8 @@ __all__ = [
     "ligand_atoms",
     "contact_map",
     "gnm_correlation",
-    "block_total_correlation",
-    "tc_profile",
+    "block_dependence",
+    "bd_profile",
 ]
 
 RCSB_URL = "https://files.rcsb.org/download/{pdb_id}.pdb"
@@ -87,7 +87,7 @@ def gnm_correlation(contacts: np.ndarray) -> np.ndarray:
     return corr
 
 
-def block_total_correlation(corr: np.ndarray, idx) -> float:
+def block_dependence(corr: np.ndarray, idx) -> float:
     """TC(B) = -1/2 ln det R_BB, in nats.
 
     Equals the KL divergence between the true zero-mean Gaussian on that block
@@ -103,21 +103,21 @@ def block_total_correlation(corr: np.ndarray, idx) -> float:
     return float(-0.5 * logdet)
 
 
-def tc_profile(corr: np.ndarray, window: int = 7) -> np.ndarray:
+def bd_profile(corr: np.ndarray, window: int = 7) -> np.ndarray:
     """Per-residue TC, using a centred window of ``window`` residues."""
     n = corr.shape[0]
     half = window // 2
     prof = np.full(n, np.nan)
     for i in range(n):
         lo, hi = max(0, i - half), min(n, i + half + 1)
-        prof[i] = block_total_correlation(corr, range(lo, hi))
+        prof[i] = block_dependence(corr, range(lo, hi))
     return prof
 
 
 def profile_from_pdb(pdb_id: str, window: int = 7, cutoff: float = 8.0,
                      cache_dir: str = "data/pdb"):
-    """Convenience wrapper: PDB id -> (TC profile, correlation matrix, names)."""
+    """Convenience wrapper: PDB id -> (BD profile, correlation matrix, names)."""
     path = fetch_pdb(pdb_id, cache_dir)
     ca, names, _ = ca_trace(path)
     corr = gnm_correlation(contact_map(ca, cutoff))
-    return tc_profile(corr, window), corr, names
+    return bd_profile(corr, window), corr, names

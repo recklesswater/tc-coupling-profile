@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from pdb_io import burial_proxy, ca_trace
-from tc_profile import contact_map, fetch_pdb, gnm_correlation, tc_profile
+from bd_profile import contact_map, fetch_pdb, gnm_correlation, bd_profile
 
 EXAMPLE_IDS = ["1UBQ", "1CRN", "1PGB", "3CHY", "1TIT"]
 WINDOW = 7
@@ -39,7 +39,7 @@ def compute(pdb_id: str):
 
     contacts = contact_map(ca)
     corr = gnm_correlation(contacts)
-    prof = tc_profile(corr, WINDOW)
+    prof = bd_profile(corr, WINDOW)
     burial = burial_proxy(ca, cutoff=10.0)
 
     n = len(ca)

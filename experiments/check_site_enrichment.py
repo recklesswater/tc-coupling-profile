@@ -24,12 +24,12 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.tc_profile import (  # noqa: E402
+from src.bd_profile import (  # noqa: E402
     contact_map,
     fetch_pdb,
     gnm_correlation,
     parse_ca,
-    tc_profile,
+    bd_profile,
 )
 
 PDB_LIST = [
@@ -78,7 +78,7 @@ def main():
             continue
 
         corr = gnm_correlation(contact_map(ca))
-        prof = tc_profile(corr, WINDOW)
+        prof = bd_profile(corr, WINDOW)
         idx = [s - 1 for s in sites]
         site_tc = np.nanmean(prof[idx])
         bg_tc = np.nanmean(prof)

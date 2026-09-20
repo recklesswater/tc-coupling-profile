@@ -34,11 +34,11 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.pdb_io import burial_proxy, ca_trace  # noqa: E402
-from src.tc_profile import (  # noqa: E402
+from src.bd_profile import (  # noqa: E402
     contact_map,
     fetch_pdb,
     gnm_correlation,
-    tc_profile,
+    bd_profile,
 )
 
 PDB_LIST = [
@@ -81,7 +81,7 @@ def main():
         gamma = np.diag(degree) - contacts
         flexibility = np.diag(np.linalg.pinv(gamma))
         corr = gnm_correlation(contacts)
-        prof = tc_profile(corr, WINDOW)
+        prof = bd_profile(corr, WINDOW)
         burial = burial_proxy(ca, 10.0)
 
         m = np.isfinite(prof) & np.isfinite(flexibility)
